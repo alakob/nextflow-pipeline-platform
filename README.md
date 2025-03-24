@@ -40,7 +40,7 @@ For a detailed architecture overview, see [Architecture Documentation](./docs/ar
 
 ```bash
 # Clone and set up the complete development environment
-git clone https://github.com/yourusername/nextflow-pipeline-platform.git && cd nextflow-pipeline-platform && ./scripts/setup_dev.sh
+git clone https://github.com/alakob/nextflow-pipeline-platform.git && cd nextflow-pipeline-platform && ./scripts/setup_dev.sh
 ```
 
 ### Step-by-step Installation
