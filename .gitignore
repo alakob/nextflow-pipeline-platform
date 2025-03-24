@@ -1,0 +1,16 @@
+# Python 
+
+__pycache__
+
+*.pyc
+
+.env
+
+venv
+.venv
+
+# Node.js 
+
+node_modules
+
+#action_plan_docs

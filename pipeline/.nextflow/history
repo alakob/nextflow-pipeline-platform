@@ -1,0 +1,3 @@
+2025-03-23 22:12:21	-	marvelous_heyrovsky	-	6184cc468c787dee32be44ad3c962a88	30e82967-9018-4a4e-9ffc-737b5d2738f3	nextflow run test.nf
+2025-03-23 22:23:26	-	marvelous_panini	-	6184cc468c787dee32be44ad3c962a88	b05b7850-202d-4d0f-bc43-0851cd2a3620	nextflow run test.nf
+2025-03-23 22:24:03	15m 55s	infallible_knuth	ERR	6184cc468c787dee32be44ad3c962a88	b0383903-a26e-427d-854c-3073b3d4be47	nextflow run test.nf -with-trace trace-new.txt

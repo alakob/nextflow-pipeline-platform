@@ -1,0 +1,114 @@
+Mar-23 22:12:19.346 [main] DEBUG nextflow.cli.Launcher - $> nextflow run test.nf
+Mar-23 22:12:19.379 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 24.10.5
+Mar-23 22:12:19.401 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/Users/alakob/.nextflow/plugins; core-plugins: nf-amazon@2.9.2,nf-azure@1.10.2,nf-cloudcache@0.4.2,nf-codecommit@0.2.2,nf-console@1.1.4,nf-google@1.15.4,nf-tower@1.9.3,nf-wave@1.7.4
+Mar-23 22:12:19.414 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Mar-23 22:12:19.414 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Mar-23 22:12:19.415 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Mar-23 22:12:19.421 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Mar-23 22:12:19.432 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /Users/alakob/projects/nextflow-pipeline-platform/pipeline/nextflow.config
+Mar-23 22:12:19.434 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/alakob/projects/nextflow-pipeline-platform/pipeline/nextflow.config
+Mar-23 22:12:19.448 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /Users/alakob/.nextflow/secrets/store.json
+Mar-23 22:12:19.453 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@5bdaf2ce] - activable => nextflow.secret.LocalSecretsProvider@5bdaf2ce
+Mar-23 22:12:19.456 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Mar-23 22:12:19.700 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 by global default
+Mar-23 22:12:19.706 [main] DEBUG nextflow.cli.CmdRun - Launching `test.nf` [marvelous_heyrovsky] DSL2 - revision: 6184cc468c
+Mar-23 22:12:19.707 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[nf-amazon@2.9.2]
+Mar-23 22:12:19.707 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[nf-amazon@2.9.2]
+Mar-23 22:12:19.707 [main] DEBUG nextflow.plugin.PluginUpdater - Installing plugin nf-amazon version: 2.9.2
+Mar-23 22:12:19.709 [main] INFO  nextflow.plugin.PluginUpdater - Downloading plugin nf-amazon@2.9.2
+Mar-23 22:12:21.495 [main] INFO  org.pf4j.util.FileUtils - Expanded plugin zip 'nf-amazon-2.9.2.zip' in 'nf-amazon-2.9.2'
+Mar-23 22:12:21.501 [main] INFO  org.pf4j.AbstractPluginManager - Plugin 'nf-amazon@2.9.2' resolved
+Mar-23 22:12:21.501 [main] INFO  org.pf4j.AbstractPluginManager - Start plugin 'nf-amazon@2.9.2'
+Mar-23 22:12:21.514 [main] DEBUG nextflow.plugin.BasePlugin - Plugin started nf-amazon@2.9.2
+Mar-23 22:12:21.523 [main] DEBUG nextflow.file.FileHelper - > Added 'S3FileSystemProvider' to list of installed providers [s3]
+Mar-23 22:12:21.549 [main] DEBUG nextflow.Session - Session UUID: 30e82967-9018-4a4e-9ffc-737b5d2738f3
+Mar-23 22:12:21.549 [main] DEBUG nextflow.Session - Run name: marvelous_heyrovsky
+Mar-23 22:12:21.549 [main] DEBUG nextflow.Session - Executor pool size: 14
+Mar-23 22:12:21.556 [main] DEBUG nextflow.file.FileHelper - Creating a file system instance for provider: S3FileSystemProvider
+Mar-23 22:12:21.561 [main] DEBUG nextflow.cloud.aws.config.AwsConfig - AWS S3 config properties: {max_error_retry=5}
+Mar-23 22:12:21.667 [main] DEBUG nextflow.cloud.aws.AwsClientFactory - Merging AWS credentials file '/Users/alakob/.aws/credentials' and config file '/Users/alakob/.aws/config'
+Mar-23 22:12:21.755 [main] DEBUG nextflow.file.FilePorter - File porter settings maxRetries=3; maxTransfers=50; pollTimeout=null
+Mar-23 22:12:21.759 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=42; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Mar-23 22:12:21.764 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 24.10.5 build 5935
+  Created: 04-03-2025 17:55 UTC (17:55 BST)
+  System: Mac OS X 15.3.1
+  Runtime: Groovy 4.0.23 on OpenJDK 64-Bit Server VM 17.0.14+0
+  Encoding: UTF-8 (UTF-8)
+  Process: 20677@Blaises-MacBook-Pro.local [127.0.0.1]
+  CPUs: 14 - Mem: 24 GB (101 MB) - Swap: 14 GB (805.2 MB)
+Mar-23 22:12:22.208 [main] DEBUG nextflow.Session - Work-dir: s3://nextflow-pipeline-data-nto15x4w/work [Mac OS X]
+Mar-23 22:12:22.209 [main] DEBUG nextflow.Session - Script base path does not exist or is not a directory: /Users/alakob/projects/nextflow-pipeline-platform/pipeline/bin
+Mar-23 22:12:22.220 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[AwsBatchExecutor]
+Mar-23 22:12:22.225 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Mar-23 22:12:22.242 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Mar-23 22:12:22.246 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 15; maxThreads: 1000
+Mar-23 22:12:22.268 [main] DEBUG nextflow.Session - Session start
+Mar-23 22:12:22.270 [main] DEBUG nextflow.trace.TraceFileObserver - Workflow started -- trace file: /Users/alakob/projects/nextflow-pipeline-platform/pipeline/trace.txt
+Mar-23 22:12:22.339 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Mar-23 22:12:22.359 [main] DEBUG nextflow.script.ProcessConfig - Config settings `withName:.*` matches process HELLO
+Mar-23 22:12:22.366 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: awsbatch
+Mar-23 22:12:22.366 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'awsbatch'
+Mar-23 22:12:22.367 [main] DEBUG nextflow.executor.Executor - [warm up] executor > awsbatch
+Mar-23 22:12:22.372 [main] DEBUG nextflow.util.ThrottlingExecutor - Creating throttling executor with opts: nextflow.util.ThrottlingExecutor$Options(poolName:AWSBatch-executor, limiter:RateLimiter[stableRate=50.0qps], poolSize:70, maxPoolSize:70, queueSize:5000, maxRetries:10, keepAlive:1m, autoThrottle:true, errorBurstDelay:1s, rampUpInterval:100, rampUpFactor:1.2, rampUpMaxRate:1.7976931348623157E308, backOffFactor:2.0, backOffMinRate:0.0166666667, retryDelay:1s)
+Mar-23 22:12:22.374 [main] DEBUG nextflow.util.ThrottlingExecutor - Creating throttling executor with opts: nextflow.util.ThrottlingExecutor$Options(poolName:AWSBatch-reaper, limiter:RateLimiter[stableRate=50.0qps], poolSize:70, maxPoolSize:70, queueSize:5000, maxRetries:10, keepAlive:1m, autoThrottle:true, errorBurstDelay:1s, rampUpInterval:100, rampUpFactor:1.2, rampUpMaxRate:1.7976931348623157E308, backOffFactor:2.0, backOffMinRate:0.0166666667, retryDelay:1s)
+Mar-23 22:12:22.375 [main] DEBUG n.cloud.aws.batch.AwsBatchExecutor - Creating parallel monitor for executor 'awsbatch' > pollInterval=10s; dumpInterval=5m
+Mar-23 22:12:22.377 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: awsbatch)
+Mar-23 22:12:22.378 [main] DEBUG nextflow.cloud.aws.AwsClientFactory - Merging AWS credentials file '/Users/alakob/.aws/credentials' and config file '/Users/alakob/.aws/config'
+Mar-23 22:12:22.391 [main] DEBUG n.cloud.aws.batch.AwsBatchExecutor - [AWS BATCH] Executor options=AwsOptions(remoteBinDir:null, fetchInstanceType:false, region:eu-north-1, jobRole:null, logsGroup:null, retryMode:standard, shareIdentifier:null, schedulingPriority:0, cliPath:/usr/local/bin/aws, volumes:[], maxParallelTransfers:4, maxTransferAttempts:5, maxSpotAttempts:0, delayBetweenAttempts:10s, storageClass:null, storageEncryption:null, storageKmsKeyId:null, s3Acl:null, debug:null, requesterPays:null, awsCli:/usr/local/bin/aws --region eu-north-1, fargateMode:false, s5cmdPath:null, executionRole:null)
+Mar-23 22:12:22.430 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: HELLO
+Mar-23 22:12:22.431 [main] DEBUG nextflow.Session - Igniting dataflow network (1)
+Mar-23 22:12:22.431 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > HELLO
+Mar-23 22:12:22.432 [main] DEBUG nextflow.script.ScriptRunner - Parsed script files:
+  Script_bf93c2e219403884: /Users/alakob/projects/nextflow-pipeline-platform/pipeline/test.nf
+Mar-23 22:12:22.432 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Mar-23 22:12:22.432 [main] DEBUG nextflow.Session - Session await
+Mar-23 22:12:24.024 [AWSBatch-executor-1] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] [AWS BATCH] Created job definition name=nf-ubuntu-20-04:1; container=ubuntu:20.04
+Mar-23 22:12:24.161 [AWSBatch-executor-1] DEBUG n.c.aws.batch.AwsBatchTaskHandler - [AWS BATCH] Process `HELLO` submitted > job=16293b8f-a9f3-496c-93b9-b247f224d031; work-dir=s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc
+Mar-23 22:12:24.162 [AWSBatch-executor-1] INFO  nextflow.Session - [0c/4d0673] Submitted process > HELLO
+Mar-23 22:17:32.537 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:22:32.648 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:27:32.757 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:32:32.870 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:37:32.990 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:42:33.091 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:47:33.203 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:52:33.367 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 22:57:33.543 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:02:33.676 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:07:33.780 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:12:33.927 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:17:34.004 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:22:34.119 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:27:34.234 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:32:34.348 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:37:34.476 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:42:34.592 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:47:34.705 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:52:34.837 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-23 23:57:34.942 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-24 00:02:35.051 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
+Mar-24 00:07:35.153 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor awsbatch > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 1; name: HELLO; status: SUBMITTED; exit: -; error: -; workDir: s3://nextflow-pipeline-data-nto15x4w/work/0c/4d0673c1fe665b14e40e36a7abf8cc]
