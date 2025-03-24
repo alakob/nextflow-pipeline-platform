@@ -149,7 +149,32 @@ cd backend
 alembic upgrade head
 ```
 
-3. **Frontend Setup**:
+3. **Database Reset Utility**:
+
+The platform includes a dedicated utility for resetting the database, which is useful during development and testing phases.
+
+```bash
+# Reset development database (interactive mode)
+./backend/scripts/reset_db.sh dev
+
+# Reset with sample data
+./backend/scripts/reset_db.sh dev --with-sample-data
+
+# Force reset without confirmation
+./backend/scripts/reset_db.sh dev --force
+
+# Reset different environments
+./backend/scripts/reset_db.sh test
+./backend/scripts/reset_db.sh prod  # Has additional safety confirmations
+```
+
+This utility handles:
+- Safely dropping all tables with transaction support
+- Recreating the schema from the SQLAlchemy models
+- Optionally creating sample data for testing
+- Environment separation (dev/test/prod)
+
+4. **Frontend Setup**:
 
 ```bash
 cd frontend
@@ -429,6 +454,24 @@ async def get_job(
 2. **Least Privilege**: Follow the principle of least privilege
 3. **Audit Logging**: Log all sensitive operations
 4. **Secure File Handling**: Handle uploaded files securely
+
+## Job Status Lifecycle
+
+Jobs in the system follow a specific lifecycle with these statuses:
+
+1. **PENDING**: Initial state when a job is submitted
+2. **QUEUED**: Job is in the queue waiting to be processed
+3. **RUNNING**: Job is actively being executed
+4. **COMPLETED**: Job has finished successfully with results available for download
+5. **FAILED**: Job execution encountered an error
+6. **CANCELED**: Job was manually canceled by a user
+
+The job timeline is tracked with the following timestamps:
+- `created_at`: When the job was initially submitted
+- `started_at`: When execution began
+- `completed_at`: When execution finished (success or failure)
+
+The frontend displays these statuses visually with color-coded badges and a timeline view, helping users understand the current state of their jobs at a glance.
 
 ## Contribution Guidelines
 

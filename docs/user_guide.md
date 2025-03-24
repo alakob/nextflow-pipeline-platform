@@ -157,40 +157,49 @@ The Jobs dashboard provides real-time monitoring of all your pipeline runs.
 
 #### Job Details View
 
-Click on any job to access the detailed view with four tabs:
+Click on any job to access the detailed view with comprehensive information about your pipeline execution:
 
 1. **Overview Tab**
-   - Job metadata
-   - Status information
-   - Execution timeline
+   - Job metadata (ID, description)
+   - Enhanced status timeline showing:
+     - Creation date and time
+     - Execution start time
+     - Completion date and time
+   - Visual status indicator with color-coded badges
    - Resource utilization graphs
 
 2. **Parameters Tab**
    - All parameters used for this job
    - Input data location
    - Output data location
+   - Parameter validation status
 
 3. **Logs Tab**
    - Execution logs with search functionality
    - Error messages (if any)
    - Process-specific outputs
+   - Event timeline with timestamps
 
 4. **Results Tab**
+   - "Download Analysis Results" button for completed jobs
    - Links to output files in S3
    - Summary metrics (if available)
    - Visualization of results (if available)
+
+> 💡 **Tip:** The status timeline provides at-a-glance visibility into how long each stage of your job took to complete.
 
 ### Results Management
 
 Once a job completes, you can manage the results:
 
+- **Download Complete Results**: Get the entire analysis output as a single package
 - **View Results**: Browse output files directly in the web interface
-- **Download Results**: Get individual files or the complete output directory
+- **Download Individual Files**: Select specific files to download
 - **Share Results**: Generate time-limited shareable links
 - **Archive Results**: Move to long-term storage with reduced access costs
 - **Delete Results**: Remove unnecessary output files to reduce storage costs
 
-> 💡 **Tip:** Set up automatic notifications to be alerted when jobs complete.
+> 💡 **Tip:** Set up automatic notifications to be alerted when jobs complete. Downloaded results can be stored locally for offline analysis.
 
 ## Advanced Features
 

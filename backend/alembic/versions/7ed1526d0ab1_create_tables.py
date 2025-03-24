@@ -9,7 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, String, ForeignKey, DateTime, Text
 from datetime import datetime
 
 
@@ -25,7 +25,7 @@ def upgrade() -> None:
     # Create users table
     op.create_table(
         'users',
-        sa.Column('id', sa.Integer(), primary_key=True, index=True),
+        sa.Column('id', sa.String(36), primary_key=True, index=True),
         sa.Column('username', sa.String(), nullable=False, unique=True, index=True),
         sa.Column('hashed_password', sa.String(), nullable=False),
         sa.Column('role', sa.String(), nullable=False, server_default='user'),
@@ -34,22 +34,28 @@ def upgrade() -> None:
     # Create pipelines table
     op.create_table(
         'pipelines',
-        sa.Column('id', sa.Integer(), primary_key=True, index=True),
+        sa.Column('id', sa.String(36), primary_key=True, index=True),
         sa.Column('name', sa.String(), nullable=False, unique=True),
         sa.Column('description', sa.String(), nullable=True),
-        sa.Column('nextflow_config', sa.String(), nullable=True),
+        sa.Column('nextflow_config', sa.Text(), nullable=True),
     )
 
     # Create jobs table
     op.create_table(
         'jobs',
-        sa.Column('id', sa.Integer(), primary_key=True, index=True),
-        sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id'), nullable=False),
-        sa.Column('pipeline_id', sa.Integer(), sa.ForeignKey('pipelines.id'), nullable=False),
+        sa.Column('id', sa.String(36), primary_key=True, index=True),
+        sa.Column('user_id', sa.String(36), sa.ForeignKey('users.id'), nullable=False),
+        sa.Column('pipeline_id', sa.String(36), sa.ForeignKey('pipelines.id'), nullable=False),
         sa.Column('status', sa.String(), nullable=False, server_default='pending'),
-        sa.Column('parameters', sa.String(), nullable=True),
+        sa.Column('parameters', sa.Text(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
         sa.Column('updated_at', sa.DateTime(), nullable=False, server_default=sa.text('now()'), onupdate=sa.text('now()')),
+        sa.Column('external_id', sa.String(), nullable=True),
+        sa.Column('work_dir', sa.String(), nullable=True),
+        sa.Column('output_dir', sa.String(), nullable=True),
+        sa.Column('started_at', sa.DateTime(), nullable=True),
+        sa.Column('completed_at', sa.DateTime(), nullable=True),
+        sa.Column('description', sa.String(), nullable=True),
     )
 
 

@@ -27,8 +27,14 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# Override the sqlalchemy.url from alembic.ini with the DATABASE_URL environment variable
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+# Convert asyncpg URL to psycopg2 for Alembic
+# Alembic doesn't support asyncpg directly
+db_url = DATABASE_URL
+if 'postgresql+asyncpg' in db_url:
+    db_url = db_url.replace('postgresql+asyncpg', 'postgresql', 1)
+
+# Override the sqlalchemy.url from alembic.ini with the modified DATABASE_URL
+config.set_main_option("sqlalchemy.url", db_url)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

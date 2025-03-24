@@ -4,7 +4,12 @@
 - Eliminate code duplication by checking for existing similar code and functionality.
 - Ensure code functions correctly across development (dev), testing (test), and production (prod) environments.
 - Only make requested changes or those that are well understood and directly related.
-- When fixing bugs, first attempt to resolve them using existing patterns and technologies. If introducing a new approach, remove the old implementation to prevent duplication.
+- When fixing bugs, first attempt to resolve them using existing patterns and technologies. If introducing a new approach, remove the old implementation to prevent duplication. always check for existing similar code and functionality. always check for dependencies and  effect of any code change on the entire codebase and correct accordingly.
+- Ensure all database operations follow best practices:
+  - Use transactions for atomicity.
+  - Implement proper error handling.
+  - Use connection pooling for performance.
+
 
 ### Maintain a clean and well-organized codebase.
 - Avoid writing scripts in files unless they are reusable.

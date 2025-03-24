@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authApi } from '../../services/api';
+import { useAuth } from './AuthContext';
 import './Auth.css';
 
 const Login = () => {
@@ -9,6 +9,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,15 +23,17 @@ const Login = () => {
       setLoading(true);
       setError('');
       
-      const response = await authApi.login(username, password);
+      console.log('Attempting login with:', username);
+      const success = await login(username, password);
       
-      if (response && response.access_token) {
-        // Redirect to dashboard after successful login
+      if (success) {
+        console.log('Login successful, redirecting to dashboard');
         navigate('/dashboard');
       } else {
         setError('Login failed. Please check your credentials.');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError(
         err.response?.data?.detail || 
         'Authentication failed. Please try again.'

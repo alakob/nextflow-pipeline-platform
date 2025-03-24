@@ -371,6 +371,40 @@ curl -X DELETE http://localhost:8000/pipelines/jobs/323e4567-e89b-12d3-a456-4266
 }
 ```
 
+#### Get Job Download Link
+
+> 🔒 **Authentication Required**
+
+```http
+GET /pipelines/jobs/{job_id}/download
+```
+
+**Path Parameters:**
+- `job_id`: UUID of the job
+
+**Required Conditions:**
+- Job status must be "COMPLETED"
+- User must be the owner of the job or have admin role
+
+**cURL Example:**
+```bash
+curl -X GET http://localhost:8000/pipelines/jobs/323e4567-e89b-12d3-a456-426614174000/download \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response:**
+```json
+{
+  "download_url": "https://storage.example.com/path/to/results.zip?token=abc123",
+  "expires_at": "2025-03-01T17:30:00"
+}
+```
+
+**Error Cases:**
+- Returns 404 if job not found
+- Returns 403 if user is not authorized to access the job
+- Returns 400 if job is not in completed status
+
 ## Error Responses
 
 The API uses standard HTTP status codes and returns detailed error messages in JSON format.

@@ -35,24 +35,49 @@ backend/
 
 ### Setting Up the Development Environment
 
-1. Create a virtual environment:
+The recommended approach is to use the automated setup script which handles all configuration steps:
+
+```bash
+# From project root directory
+./scripts/setup_dev.sh
+```
+
+For running just the backend service in development mode:
+
+```bash
+./scripts/setup_dev.sh --start-backend-dev
+```
+
+### Manual Setup (Alternative)
+
+If you prefer to set up manually:
+
+1. Ensure PostgreSQL is running via Docker Compose:
    ```bash
+   # From project root directory
+   docker-compose up -d postgres
+   ```
+
+2. Create a virtual environment:
+   ```bash
+   cd backend
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-2. Install dependencies:
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Set up environment variables:
+4. Set up environment variables:
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration
+   # Edit .env with your configuration, ensuring DATABASE_URL points to the Docker PostgreSQL instance:
+   # DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/nextflow_platform
    ```
 
-4. Initialize the database:
+5. Initialize the database:
    ```bash
    alembic upgrade head
    ```
@@ -62,10 +87,26 @@ backend/
 Start the FastAPI development server:
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at http://localhost:8000 with interactive documentation at http://localhost:8000/docs.
+
+### Database Connectivity
+
+The backend uses SQLAlchemy with an async PostgreSQL adapter. The connection is configured through the `DATABASE_URL` environment variable:
+
+```
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/nextflow_platform
+```
+
+Key components:
+- `postgresql+asyncpg`: The SQLAlchemy async driver for PostgreSQL
+- `postgres:postgres`: Database username:password
+- `localhost:5432`: Host and port for the PostgreSQL server
+- `nextflow_platform`: Database name
+
+The Docker Compose setup automatically creates and manages this database container.
 
 ## Key Components
 

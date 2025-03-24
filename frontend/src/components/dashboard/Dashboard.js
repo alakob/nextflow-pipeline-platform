@@ -13,12 +13,21 @@ const Dashboard = () => {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const jobsData = await pipelineApi.listJobs();
-        setJobs(jobsData);
-        setError(null);
+        const response = await pipelineApi.listJobs();
+        // Check if response exists and handle it properly - even empty arrays are valid
+        if (response) {
+          setJobs(Array.isArray(response) ? response : []);
+          setError(null);
+        } else {
+          // This case would be unexpected (null/undefined response)
+          console.warn('Unexpected response from listJobs API:', response);
+          setJobs([]);
+          setError(null); // Don't show an error for empty jobs
+        }
       } catch (err) {
         console.error('Error fetching jobs:', err);
         setError('Failed to load jobs. Please try again later.');
+        // Don't clear jobs array on error to maintain existing data if available
       } finally {
         setLoading(false);
       }
@@ -109,10 +118,10 @@ const Dashboard = () => {
             </thead>
             <tbody>
               {jobs.map((job) => (
-                <tr key={job.id}>
+                <tr key={job.job_id}>
                   <td>
-                    <Link to={`/jobs/${job.id}`} className="job-id-link">
-                      {job.id}
+                    <Link to={`/jobs/${job.job_id}`} className="job-id-link">
+                      {job.job_id}
                     </Link>
                   </td>
                   <td>{job.pipeline_name || 'Unknown'}</td>
@@ -127,12 +136,12 @@ const Dashboard = () => {
                   <td>{formatDate(job.created_at)}</td>
                   <td>
                     <div className="job-actions">
-                      <Link to={`/jobs/${job.id}`} className="action-button view-button">
+                      <Link to={`/jobs/${job.job_id}`} className="action-button view-button">
                         View
                       </Link>
-                      {['running', 'queued'].includes(job.status.toLowerCase()) && (
+                      {['running', 'queued'].includes(job.status?.toLowerCase()) && (
                         <button
-                          onClick={() => handleCancelJob(job.id)}
+                          onClick={() => handleCancelJob(job.job_id)}
                           className="action-button cancel-button"
                         >
                           Cancel

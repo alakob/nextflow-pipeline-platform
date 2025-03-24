@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { pipelineApi } from '../../services/api';
+import PipelineParamsForm from './PipelineParamsForm';
 import './Jobs.css';
 
 const JobSubmission = () => {
   const [pipelines, setPipelines] = useState([]);
   const [selectedPipeline, setSelectedPipeline] = useState('');
+  const [selectedPipelineName, setSelectedPipelineName] = useState('');
   const [description, setDescription] = useState('');
-  const [params, setParams] = useState('');
+  const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
   const [fetchingPipelines, setFetchingPipelines] = useState(true);
   const [error, setError] = useState(null);
@@ -17,8 +19,14 @@ const JobSubmission = () => {
     const fetchPipelines = async () => {
       try {
         setFetchingPipelines(true);
-        const pipelinesData = await pipelineApi.listPipelines();
-        setPipelines(pipelinesData);
+        const response = await pipelineApi.listPipelines();
+        // Extract the pipelines array from the response
+        if (response && response.pipelines) {
+          setPipelines(response.pipelines);
+        } else {
+          setPipelines([]);
+          console.error('Unexpected API response format:', response);
+        }
       } catch (err) {
         console.error('Error fetching pipelines:', err);
         setError('Failed to load pipelines. Please try again later.');
@@ -29,6 +37,23 @@ const JobSubmission = () => {
 
     fetchPipelines();
   }, []);
+
+  const handlePipelineChange = (e) => {
+    const pipelineId = e.target.value;
+    setSelectedPipeline(pipelineId);
+    
+    // Find the pipeline name for the selected pipeline ID
+    if (pipelineId) {
+      const selected = pipelines.find(p => p.id.toString() === pipelineId.toString());
+      setSelectedPipelineName(selected ? selected.name : '');
+    } else {
+      setSelectedPipelineName('');
+    }
+  };
+
+  const handleParamsChange = (formValues) => {
+    setParams(formValues);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,23 +67,65 @@ const JobSubmission = () => {
       setLoading(true);
       setError(null);
       
-      // Parse params from JSON string to object
-      let parsedParams;
-      try {
-        parsedParams = params ? JSON.parse(params) : {};
-      } catch (parseErr) {
-        setError('Invalid JSON in parameters field');
-        setLoading(false);
-        return;
+      console.log('Submitting job with params:', {
+        pipeline_id: selectedPipeline,
+        params,
+        description
+      });
+      
+      // Ensure params is not empty and is properly structured
+      let processedParams = params;
+      if (!params || Object.keys(params).length === 0) {
+        console.warn('No parameters provided, using empty object');
+        processedParams = {};
       }
       
+      // Validate each parameter to ensure it's properly formatted
+      if (typeof processedParams === 'object') {
+        // Remove any null or undefined values
+        Object.keys(processedParams).forEach(key => {
+          if (processedParams[key] === null || processedParams[key] === undefined) {
+            console.warn(`Removing null/undefined parameter: ${key}`);
+            delete processedParams[key];
+          }
+        });
+      }
+      
+      console.log('Processed parameters for submission:', processedParams);
+      
+      // We're now using the params object directly instead of parsing JSON
       const response = await pipelineApi.submitJob(
         selectedPipeline,
-        parsedParams,
-        description
+        processedParams, // Use the processed params
+        description || '' // Ensure description is never null
       );
       
-      navigate(`/jobs/${response.id}`);
+      console.log('Job submission response:', response);
+      
+      // Use a timeout to ensure UI updates before redirect
+      setTimeout(() => {
+        console.log('Redirecting to dashboard...');
+        
+        // Try multiple redirect approaches to ensure it works
+        try {
+          // Method 1: Using navigate function from React Router
+          navigate('/dashboard', { replace: true });
+          
+          // Method 2: Direct window location change as fallback
+          // This will only happen if the first method fails silently
+          setTimeout(() => {
+            console.log('Fallback redirect triggered');
+            window.location.href = '/dashboard';
+          }, 100);
+        } catch (navError) {
+          console.error('Navigation error:', navError);
+          // If navigate fails, use direct location
+          window.location.href = '/dashboard';
+        }
+      }, 300);
+      
+      // Show success message
+      alert('Job submitted successfully! Redirecting to dashboard...');
     } catch (err) {
       console.error('Error submitting job:', err);
       setError(
@@ -94,7 +161,7 @@ const JobSubmission = () => {
                 <select
                   id="pipeline"
                   value={selectedPipeline}
-                  onChange={(e) => setSelectedPipeline(e.target.value)}
+                  onChange={handlePipelineChange}
                   disabled={loading}
                   required
                 >
@@ -120,23 +187,13 @@ const JobSubmission = () => {
               />
             </div>
             
-            <div className="form-group">
-              <label htmlFor="params">
-                Parameters (JSON format)
-                <span className="optional-label">Optional</span>
-              </label>
-              <textarea
-                id="params"
-                value={params}
-                onChange={(e) => setParams(e.target.value)}
-                placeholder='{"param1": "value1", "param2": "value2"}'
-                rows={5}
+            {selectedPipelineName && (
+              <PipelineParamsForm
+                selectedPipelineName={selectedPipelineName}
+                onChange={handleParamsChange}
                 disabled={loading}
               />
-              <div className="form-hint">
-                Enter pipeline parameters in JSON format
-              </div>
-            </div>
+            )}
             
             <div className="form-actions">
               <button

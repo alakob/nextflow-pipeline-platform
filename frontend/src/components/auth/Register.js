@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '../../services/api';
+import { useAuth } from './AuthContext';
 import './Auth.css';
 
 const Register = () => {
@@ -8,11 +9,17 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Reset messages
+    setError('');
+    setSuccess('');
     
     // Validation
     if (!username || !password || !confirmPassword) {
@@ -32,25 +39,44 @@ const Register = () => {
     
     try {
       setLoading(true);
-      setError('');
       
+      // Register the user
       await authApi.register(username, password);
+      setSuccess('Registration successful!');
       
-      // Automatically log in the user after registration
-      const loginResponse = await authApi.login(username, password);
+      // Delay navigation to show success message first
+      setTimeout(async () => {
+        try {
+          // Use AuthContext login to ensure auth state is properly updated
+          const loginSuccess = await login(username, password);
+          
+          if (loginSuccess) {
+            navigate('/dashboard');
+          } else {
+            // If login fails, redirect to login page with success message
+            navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
+          }
+        } catch (loginErr) {
+          console.error('Auto-login failed:', loginErr);
+          // If login fails, redirect to login page with success message
+          navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
+        }
+      }, 1500); // Show success message for 1.5 seconds before redirecting
       
-      if (loginResponse && loginResponse.access_token) {
-        navigate('/dashboard');
-      } else {
-        // If auto-login fails, redirect to login page
-        navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
-      }
     } catch (err) {
-      setError(
-        err.response?.data?.detail || 
-        'Registration failed. Please try again.'
-      );
-    } finally {
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (err.response?.data?.detail) {
+        if (typeof err.response.data.detail === 'object') {
+          errorMessage = JSON.stringify(err.response.data.detail);
+        } else if (err.response.data.detail.includes('already registered')) {
+          errorMessage = 'Username already exists. Please choose a different username.';
+        } else {
+          errorMessage = err.response.data.detail;
+        }
+      }
+      
+      setError(errorMessage);
       setLoading(false);
     }
   };
@@ -61,6 +87,7 @@ const Register = () => {
         <h2>Register for Pipeline Platform</h2>
         
         {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
@@ -70,7 +97,7 @@ const Register = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              disabled={loading}
+              disabled={loading || success}
               autoComplete="username"
             />
           </div>
@@ -82,7 +109,7 @@ const Register = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
+              disabled={loading || success}
               autoComplete="new-password"
             />
           </div>
@@ -94,7 +121,7 @@ const Register = () => {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={loading}
+              disabled={loading || success}
               autoComplete="new-password"
             />
           </div>
@@ -102,7 +129,7 @@ const Register = () => {
           <button 
             type="submit" 
             className="auth-button" 
-            disabled={loading}
+            disabled={loading || success}
           >
             {loading ? 'Registering...' : 'Register'}
           </button>

@@ -10,8 +10,15 @@ TESTING = os.getenv("TESTING", "false").lower() == "true"
 if TESTING:
     DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 else:
-    # Use postgresql+asyncpg for production async PostgreSQL
-    DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost:5432/nextflow_db")
+    # Use environment variable or fallback to default
+    DATABASE_URL = os.getenv(
+        "DATABASE_URL", 
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/nextflow_platform"
+    )
+    
+    # Handle asyncpg driver requirement
+    if DATABASE_URL.startswith("postgresql://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # Create async engine with the appropriate connect args for SQLite
 connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}

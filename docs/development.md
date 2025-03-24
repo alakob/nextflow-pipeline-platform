@@ -14,20 +14,88 @@ The Nextflow Pipeline Platform follows these core development principles:
 
 ## Environment Setup
 
-### Local Development Environment
+### Automated Setup Script
+
+The project includes a comprehensive setup script (`scripts/setup_dev.sh`) that automates the development environment configuration process. This is the recommended approach for most developers.
+
+```bash
+# Basic setup (environment configuration only)
+./scripts/setup_dev.sh
+```
+
+#### Setup Script Features
+
+The setup script handles the following tasks:
+
+1. **Environment Validation** - Checks for required dependencies
+2. **Database Setup** - Starts PostgreSQL using Docker Compose
+3. **Backend Configuration**
+   - Creates Python virtual environment
+   - Installs required packages
+   - Sets up environment variables
+   - Runs database migrations
+4. **Frontend Configuration**
+   - Installs Node.js dependencies
+   - Sets up environment variables
+5. **Pipeline Setup** - Creates necessary directories
+
+#### Starting Services
+
+The setup script provides several command-line options:
+
+```bash
+# Start all services (frontend, backend, PostgreSQL)
+./scripts/setup_dev.sh --start
+
+# Start all services in detached mode (background)
+./scripts/setup_dev.sh --start-detached
+
+# Start only backend with PostgreSQL
+./scripts/setup_dev.sh --start-backend
+
+# Start only frontend
+./scripts/setup_dev.sh --start-frontend
+
+# Start backend in development mode with hot-reloading
+./scripts/setup_dev.sh --start-backend-dev
+
+# Start frontend in development mode
+./scripts/setup_dev.sh --start-frontend-dev
+
+# Run the test suite
+./scripts/setup_dev.sh --test
+```
+
+#### Docker-Based Database
+
+The platform uses a Docker-based PostgreSQL database for development, eliminating the need for a local PostgreSQL installation:
+
+- PostgreSQL runs in a Docker container
+- Data is persisted in a Docker volume
+- Environment variables are configured automatically
+- Database migrations are run during setup
+
+### Manual Development Environment
+
+If you prefer to set up components individually, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/nextflow-pipeline-platform.git
+   git clone https://github.com/alakob/nextflow-pipeline-platform.git
    cd nextflow-pipeline-platform
    ```
 
-2. Set up separate environments for each component:
+2. Start the PostgreSQL container:
+   ```bash
+   docker-compose up -d postgres
+   ```
+
+3. Set up separate environments for each component:
    - [Backend Setup](backend_development.md)
    - [Frontend Setup](frontend_development.md)
    - [Pipeline Setup](pipeline_development.md)
 
-3. Configure local environment variables:
+4. Configure local environment variables:
    ```bash
    # Backend
    cd backend

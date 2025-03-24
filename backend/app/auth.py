@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
+import os
+from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -11,10 +13,10 @@ from passlib.context import CryptContext
 from db.database import get_db
 from db.models import User
 
-# Constants
-SECRET_KEY = "your-secure-secret-key-for-development"
+# Load environment variables or use defaults
+SECRET_KEY = os.getenv("SECRET_KEY", "your-secure-secret-key-for-development")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
 # Security utilities
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -52,9 +54,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
     try:
         # Decode JWT token
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
-        if user_id is None:
+        user_id_str: str = payload.get("sub")
+        if user_id_str is None:
             raise credentials_exception
+        
+        # Convert string to UUID
+        try:
+            user_id = UUID(user_id_str)
+        except ValueError:
+            raise credentials_exception
+            
     except jwt.PyJWTError:
         raise credentials_exception
     

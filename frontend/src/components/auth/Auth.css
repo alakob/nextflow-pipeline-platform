@@ -86,6 +86,15 @@
   font-size: 0.9rem;
 }
 
+.auth-success {
+  background-color: #c6f6d5;
+  color: #2f855a;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
 .auth-links {
   margin-top: 1.5rem;
   text-align: center;

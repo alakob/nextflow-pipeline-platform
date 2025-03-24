@@ -7,6 +7,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import JobSubmission from './components/jobs/JobSubmission';
+import JobDetail from './components/jobs/JobDetail';
 import './App.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/jobs/new" element={<JobSubmission />} />
+              <Route path="/jobs/:jobId" element={<JobDetail />} />
             </Route>
           </Route>
           

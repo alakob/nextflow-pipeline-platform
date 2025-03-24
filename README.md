@@ -20,7 +20,8 @@ The Nextflow Pipeline Platform provides a web-based interface for managing, exec
 - 🔐 User authentication with JWT
 - 🧬 Pipeline management and versioning
 - 🚀 Job submission with customizable parameters
-- 📊 Real-time status monitoring
+- 📊 Real-time status monitoring and detailed job timeline
+- 📥 Download functionality for completed analysis results
 - ☁️ AWS infrastructure integration
 - 🔄 RESTful API for programmatic access
 
@@ -32,26 +33,56 @@ For a detailed architecture overview, see [Architecture Documentation](./docs/ar
 
 - Python 3.10+
 - Node.js 18+
-- PostgreSQL 14+
+- Docker and Docker Compose
 - AWS Account with appropriate permissions
-- Docker (for local development)
 
-### One-line Setup (Development)
+### Development Setup
+
+The platform includes a comprehensive setup script that handles environment configuration and provides various options for starting services:
 
 ```bash
-# Clone and set up the complete development environment
-git clone https://github.com/alakob/nextflow-pipeline-platform.git && cd nextflow-pipeline-platform && ./scripts/setup_dev.sh
+# Clone the repository
+git clone https://github.com/alakob/nextflow-pipeline-platform.git
+cd nextflow-pipeline-platform
+
+# Run setup script (configures environment only)
+./scripts/setup_dev.sh
+
+# Start all services
+./scripts/setup_dev.sh --start
+
+# Start all services in detached mode (background)
+./scripts/setup_dev.sh --start-detached
+
+# Start only backend (with PostgreSQL)
+./scripts/setup_dev.sh --start-backend
+
+# Start only frontend
+./scripts/setup_dev.sh --start-frontend
+
+# Start backend in development mode with hot-reloading
+./scripts/setup_dev.sh --start-backend-dev
+
+# Start frontend in development mode
+./scripts/setup_dev.sh --start-frontend-dev
+
+# Run test suite
+./scripts/setup_dev.sh --test
 ```
 
-### Step-by-step Installation
+The setup script automatically:
+- Configures a Docker-based PostgreSQL database
+- Creates and activates Python virtual environment
+- Installs all required dependencies
+- Sets up environment variables
+- Runs database migrations
+- Prepares the frontend environment
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/nextflow-pipeline-platform.git
-   cd nextflow-pipeline-platform
-   ```
+### Manual Setup
 
-2. **Backend setup**
+If you prefer to set up components manually:
+
+1. **Backend setup**
    ```bash
    cd backend
    python -m venv venv
@@ -61,32 +92,13 @@ git clone https://github.com/alakob/nextflow-pipeline-platform.git && cd nextflo
    alembic upgrade head      # Initialize database
    uvicorn app.main:app --reload
    ```
-   
-   Expected output:
-   ```
-   INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-   INFO:     Started reloader process [28720]
-   INFO:     Started server process [28722]
-   INFO:     Waiting for application startup.
-   INFO:     Application startup complete.
-   ```
 
-3. **Frontend setup**
+2. **Frontend setup**
    ```bash
    cd frontend
    npm install
    cp .env.example .env      # Edit with your configuration
    npm start
-   ```
-   
-   Expected output:
-   ```
-   Compiled successfully!
-   
-   You can now view nextflow-pipeline-platform in the browser.
-   
-   Local:            http://localhost:3000
-   On Your Network:  http://192.168.1.5:3000
    ```
 
 For more detailed setup instructions, see the [Development Guide](./docs/development.md).
@@ -117,17 +129,67 @@ See the following documentation for more details:
 
 ## 5. Development Workflow
 
+The project includes comprehensive tooling to streamline the development process:
+
+### Starting Services
+
+```bash
+# Start everything in one command
+./scripts/setup_dev.sh --start
+
+# View logs for specific service
+docker-compose logs -f backend
+
+# Stop all services
+docker-compose down
+```
+
+### Database Operations
+
+```bash
+# Run database migrations
+cd backend
+source venv/bin/activate
+alembic upgrade head
+
+# Create a new migration
+alembic revision --autogenerate -m "Description of changes"
+
+# Reset database (interactive mode)
+./backend/scripts/reset_db.sh dev
+
+# Reset with sample data
+./backend/scripts/reset_db.sh dev --with-sample-data
+
+# Force reset without confirmation
+./backend/scripts/reset_db.sh dev --force
+
+# Reset test or production database
+./backend/scripts/reset_db.sh test
+./backend/scripts/reset_db.sh prod
+```
+
 ### Testing
 
 ```bash
-# Backend tests
+# Run all tests
+./scripts/setup_dev.sh --test
+
+# Backend tests only
 cd backend
+source venv/bin/activate
 pytest
 
 # Frontend tests
 cd frontend
 npm test
 ```
+
+### Environment Management
+
+- The application uses Docker Compose for consistent environments
+- PostgreSQL runs in a container, eliminating the need for local installation
+- All environment variables are configured in the `.env` file created by the setup script
 
 ### Contributing
 

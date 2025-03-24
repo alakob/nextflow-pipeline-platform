@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey, DateTime, Text, TypeDecorator
+from sqlalchemy import Column, String, ForeignKey, DateTime, Text, TypeDecorator, JSON
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
 import uuid
@@ -47,11 +47,12 @@ class Pipeline(Base):
 
 class Job(Base):
     __tablename__ = "jobs"
-    id = Column(UUIDString, primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(String, primary_key=True, index=True)  # Using String for custom job IDs
     user_id = Column(UUIDString, ForeignKey("users.id"))
     pipeline_id = Column(UUIDString, ForeignKey("pipelines.id"))
-    status = Column(String, default="pending")
-    parameters = Column(Text)
+    status = Column(String, default="PENDING")
+    params = Column(JSON, default={})  # Using JSON column for structured parameters
+    message = Column(String)  # For status messages
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     # Add missing fields referenced in the router
