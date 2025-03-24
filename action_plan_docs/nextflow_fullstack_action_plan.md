@@ -296,14 +296,14 @@ variable "db_password" {
     - In `infra/`, 
     - Initialize Terraform: `terraform init`.
     - Validate the configuration: `terraform validate`.
-    - Plan the configuration: `terraform plan`.
+    - Plan the configuration: `terraform plan -out=terraform.tfplan`.
     - Apply the configuration: `terraform apply`.
 
 12. **Configure Nextflow to run on AWS Batch:**
     - In `pipeline/`, create `nextflow.config`:
       ```groovy
       aws {
-          region = 'us-east-1'
+          region = 'eu-north-1'
           batch {
               cliPath = '/usr/local/bin/aws'
               jobQueue = aws_batch_job_queue.nextflow_queue.arn
@@ -367,6 +367,14 @@ This phase automates testing and deployment.
 21. **Document the deployment process:**
     - In `docs/`, create `deployment.md` with instructions for deploying to AWS, including Terraform setup and application deployment steps.
 
+
+## complete the CI/CD and deployment setup
+
+- Create frontend Dockerfile and build configuration to containerize the React frontend
+- Add Docker Compose setup for local development and testing
+- Configure AWS secrets in GitHub repository settings for the CI/CD pipeline
+- Set up monitoring and alerting using CloudWatch or a third-party solution
+- Review the Terraform infrastructure to ensure it aligns with your specific AWS architecture requirements
 ---
 
 This action plan fully incorporates Terraform for provisioning AWS infrastructure, such as S3 buckets, IAM roles, and AWS Batch resources, ensuring a scalable and automated setup for running Nextflow pipelines. Each phase builds on the previous one, providing a clear roadmap for implementation. Let me know if you need further clarification!
