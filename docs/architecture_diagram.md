@@ -1,267 +1,278 @@
 # Nextflow Pipeline Platform Architecture
 
-This document provides a comprehensive overview of the Nextflow Pipeline Platform architecture using Mermaid diagrams.
+> **Last updated**: March 24, 2025
+
+## Table of Contents
+
+- [System Architecture](#system-architecture)
+- [Component Interaction](#component-interaction)
+- [Key Workflows](#key-workflows)
+  - [User Authentication Flow](#user-authentication-flow)
+  - [Pipeline Execution Flow](#pipeline-execution-flow)
+  - [Data Management Flow](#data-management-flow)
+- [Infrastructure Architecture](#infrastructure-architecture)
+- [Security Architecture](#security-architecture)
 
 ## System Architecture
 
-```mermaid
-graph TB
-    subgraph "Frontend"
-        UI[React UI]
-        UIstate[State Management]
-        UIcomponents[UI Components]
-    end
+The Nextflow Pipeline Platform is built on a modern, scalable architecture consisting of several key components. This diagram illustrates the high-level system architecture:
 
-    subgraph "Backend"
-        API[FastAPI Application]
-        Auth[Authentication]
-        Router[API Routers]
-        Services[Services]
-        
-        subgraph "Database"
-            Models[SQLAlchemy Models]
-            DB[(PostgreSQL)]
-        end
-    end
-
-    subgraph "Pipeline Infrastructure"
-        NF[Nextflow Engine]
-        AWS[AWS Batch/S3]
-        Containers[Docker Containers]
-    end
-
-    subgraph "Deployment Infrastructure"
-        TF[Terraform]
-        CI[CI/CD Pipeline]
-    end
-
-    UI --> API
-    API --> Auth
-    API --> Router
-    Router --> Services
-    Services --> Models
-    Models --> DB
-    Services --> NF
-    NF --> AWS
-    NF --> Containers
-    TF --> AWS
-    CI --> API
-    CI --> UI
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        Nextflow Pipeline Platform                        │
+└─────────────────────────────────────────────────────────────────────────┘
+                                     │
+                 ┌─────────────────────────────────────────┐
+                 ▼                   │                     ▼
+    ┌─────────────────────┐ ┌─────────────────┐ ┌──────────────────────┐
+    │                     │ │                 │ │                      │
+    │    Frontend App     │ │    Backend API  │ │  Admin Dashboard     │
+    │    (React)          │ │    (FastAPI)    │ │  (React)             │
+    │                     │ │                 │ │                      │
+    └─────────────────────┘ └─────────────────┘ └──────────────────────┘
+             │                       │                     │
+             └───────────┬───────────┴─────────┬──────────┘
+                         │                     │
+                         ▼                     ▼
+          ┌──────────────────────┐   ┌──────────────────────┐
+          │                      │   │                      │
+          │  User Authentication │   │  Pipeline Execution  │
+          │  Service             │   │  Service             │
+          │                      │   │                      │
+          └──────────────────────┘   └──────────────────────┘
+                     │                          │
+                     │                          │
+          ┌──────────────────────┐   ┌──────────────────────┐
+          │                      │   │                      │
+          │  User Database       │   │  Workflow Engine     │
+          │  (PostgreSQL)        │   │  (Nextflow)          │
+          │                      │   │                      │
+          └──────────────────────┘   └──────────────────────┘
+                                              │
+                      ┌────────────────────────────────────────┐
+                      ▼                      │                 ▼
+          ┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────────┐
+          │                      │ │                      │ │                      │
+          │  Compute Resources   │ │  Storage             │ │  Monitoring          │
+          │  (AWS Batch)         │ │  (S3)                │ │  (CloudWatch)        │
+          │                      │ │                      │ │                      │
+          └──────────────────────┘ └──────────────────────┘ └──────────────────────┘
 ```
 
-## Component Relationship Diagram
+## Component Interaction
 
-```mermaid
-classDiagram
-    class User {
-        +id: UUID
-        +username: String
-        +hashed_password: String
-        +role: String
-    }
-    
-    class Pipeline {
-        +id: UUID
-        +name: String
-        +description: String
-        +nextflow_config: Text
-    }
-    
-    class Job {
-        +id: UUID
-        +user_id: UUID
-        +pipeline_id: UUID
-        +status: String
-        +parameters: Text
-        +created_at: DateTime
-        +updated_at: DateTime
-        +external_id: String
-        +work_dir: String
-        +output_dir: String
-        +started_at: DateTime
-        +completed_at: DateTime
-        +description: String
-    }
-    
-    class AuthModule {
-        +verify_password()
-        +get_password_hash()
-        +create_access_token()
-        +get_current_user()
-        +get_current_active_user()
-    }
-    
-    class PipelineRouter {
-        +get_pipelines()
-        +get_pipeline()
-        +create_pipeline_job()
-        +get_pipeline_job()
-        +cancel_pipeline_job()
-        +list_pipeline_jobs()
-    }
-    
-    class PipelineService {
-        +run_pipeline()
-        +get_pipeline_status()
-        +cancel_pipeline()
-    }
+This diagram shows how the different components interact with each other:
 
-    User "1" --> "*" Job : creates
-    Pipeline "1" --> "*" Job : executes
-    PipelineRouter --> PipelineService : uses
-    PipelineRouter --> AuthModule : authenticates
-    PipelineService --> Job : manages
+```
+                           ┌─────────────────┐
+                           │                 │
+                           │     User        │
+                           │                 │
+                           └───────┬─────────┘
+                                   │
+                                   ▼
+┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
+│                 │      │                 │      │                 │
+│     Frontend    │◄────►│     Backend     │◄────►│    Database     │
+│                 │      │                 │      │                 │
+└─────────────────┘      └────────┬────────┘      └─────────────────┘
+                                  │
+                                  │
+                         ┌────────┴────────┐
+                         │                 │
+                         │    Nextflow     │
+                         │    Engine       │
+                         │                 │
+                         └────────┬────────┘
+                                  │
+                   ┌──────────────┼──────────────┐
+                   │              │              │
+                   ▼              ▼              ▼
+          ┌────────────┐  ┌────────────┐  ┌────────────┐
+          │            │  │            │  │            │
+          │ AWS Batch  │  │    S3      │  │    ECR     │
+          │            │  │            │  │            │
+          └────────────┘  └────────────┘  └────────────┘
 ```
 
-## API Flow Diagram
+## Key Workflows
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant API
-    participant Auth
-    participant Router
-    participant Service
-    participant Database
-    participant NextflowEngine
-    
-    Client->>API: Register User
-    API->>Auth: Hash Password
-    Auth-->>API: Password Hashed
-    API->>Database: Store User
-    Database-->>API: User Created
-    API-->>Client: User Created Response
-    
-    Client->>API: Login Request
-    API->>Auth: Verify Credentials
-    Auth->>Database: Query User
-    Database-->>Auth: User Data
-    Auth-->>API: JWT Token
-    API-->>Client: Access Token
-    
-    Client->>API: Request Pipeline List
-    API->>Auth: Validate Token
-    Auth-->>API: User Authenticated
-    API->>Router: Get Pipelines
-    Router->>Database: Query Pipelines
-    Database-->>Router: Pipeline List
-    Router-->>API: Pipeline Data
-    API-->>Client: Pipeline List Response
-    
-    Client->>API: Submit Pipeline Job
-    API->>Auth: Validate Token
-    Auth-->>API: User Authenticated
-    API->>Router: Create Job
-    Router->>Service: Run Pipeline
-    Service->>Database: Create Job Record
-    Database-->>Service: Job Created
-    Service->>NextflowEngine: Execute Pipeline
-    NextflowEngine-->>Service: Execution Started
-    Service-->>Router: Job Status
-    Router-->>API: Job Created
-    API-->>Client: Job Submission Response
-    
-    Client->>API: Get Job Status
-    API->>Auth: Validate Token
-    Auth-->>API: User Authenticated
-    API->>Router: Get Job
-    Router->>Database: Query Job
-    Database-->>Router: Job Data
-    Router->>Service: Check Pipeline Status
-    Service->>NextflowEngine: Get Status
-    NextflowEngine-->>Service: Current Status
-    Service-->>Router: Updated Status
-    Router-->>API: Job Status
-    API-->>Client: Job Status Response
+### User Authentication Flow
+
+This diagram illustrates the user authentication process:
+
+```
+┌─────────┐          ┌─────────┐          ┌─────────┐          ┌─────────┐
+│         │          │         │          │         │          │         │
+│  User   │          │Frontend │          │ Backend │          │Database │
+│         │          │         │          │         │          │         │
+└────┬────┘          └────┬────┘          └────┬────┘          └────┬────┘
+     │                     │                    │                    │
+     │  1. Enter creds     │                    │                    │
+     │ ─────────────────► │                    │                    │
+     │                     │                    │                    │
+     │                     │  2. Auth request   │                    │
+     │                     │ ──────────────────►│                    │
+     │                     │                    │                    │
+     │                     │                    │  3. Verify user    │
+     │                     │                    │ ──────────────────►│
+     │                     │                    │                    │
+     │                     │                    │  4. User verified  │
+     │                     │                    │ ◄──────────────────│
+     │                     │                    │                    │
+     │                     │                    │  5. Generate JWT   │
+     │                     │                    │ ─────┐             │
+     │                     │                    │      │             │
+     │                     │                    │ ◄─────┘             │
+     │                     │  6. Return token   │                    │
+     │                     │ ◄──────────────────│                    │
+     │                     │                    │                    │
+     │  7. Show dashboard  │                    │                    │
+     │ ◄─────────────────  │                    │                    │
+     │                     │                    │                    │
 ```
 
-## Database Schema
+### Pipeline Execution Flow
 
-```mermaid
-erDiagram
-    USER {
-        uuid id PK
-        string username
-        string hashed_password
-        string role
-    }
-    
-    PIPELINE {
-        uuid id PK
-        string name
-        string description
-        text nextflow_config
-    }
-    
-    JOB {
-        uuid id PK
-        uuid user_id FK
-        uuid pipeline_id FK
-        string status
-        text parameters
-        datetime created_at
-        datetime updated_at
-        string external_id
-        string work_dir
-        string output_dir
-        datetime started_at
-        datetime completed_at
-        string description
-    }
-    
-    USER ||--o{ JOB : creates
-    PIPELINE ||--o{ JOB : executes
+This diagram shows the flow of a pipeline execution:
+
+```
+┌─────────┐     ┌─────────┐     ┌─────────┐     ┌─────────┐     ┌─────────┐     ┌─────────┐
+│         │     │         │     │         │     │         │     │         │     │         │
+│  User   │     │Frontend │     │ Backend │     │Database │     │Nextflow │     │   AWS   │
+│         │     │         │     │         │     │         │     │         │     │         │
+└────┬────┘     └────┬────┘     └────┬────┘     └────┬────┘     └────┬────┘     └────┬────┘
+     │                │               │               │               │               │
+     │ 1. Submit job  │               │               │               │               │
+     │ ──────────────►│               │               │               │               │
+     │                │               │               │               │               │
+     │                │ 2. API request│               │               │               │
+     │                │ ──────────────►               │               │               │
+     │                │               │               │               │               │
+     │                │               │ 3. Create job │               │               │
+     │                │               │ ──────────────►               │               │
+     │                │               │               │               │               │
+     │                │               │ 4. Job created│               │               │
+     │                │               │ ◄──────────────               │               │
+     │                │               │               │               │               │
+     │                │ 5. Job ID     │               │               │               │
+     │                │ ◄──────────────               │               │               │
+     │                │               │               │               │               │
+     │ 6. Show job ID │               │               │               │               │
+     │ ◄──────────────│               │               │               │               │
+     │                │               │ 7. Start pipeline             │               │
+     │                │               │ ────────────────────────────► │               │
+     │                │               │               │               │               │
+     │                │               │               │               │ 8. Submit to AWS
+     │                │               │               │               │ ──────────────►
+     │                │               │               │               │               │
+     │                │               │               │               │ 9. Execute job│
+     │                │               │               │               │ ◄──────────────
+     │                │               │               │               │               │
+     │                │               │10. Update status              │               │
+     │                │               │ ◄─────────────────────────────│               │
+     │                │               │               │               │               │
+     │                │               │11. Save status│               │               │
+     │                │               │ ──────────────►               │               │
+     │                │               │               │               │               │
+     │                │12. Status update              │               │               │
+     │                │ ◄──────────────               │               │               │
+     │                │               │               │               │               │
+     │13. Update UI   │               │               │               │               │
+     │ ◄──────────────│               │               │               │               │
+     │                │               │               │               │               │
 ```
 
-## Authentication Flow
+### Data Management Flow
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant FastAPI
-    participant Auth
-    participant Database
-    
-    Client->>FastAPI: POST /login
-    FastAPI->>Auth: Verify credentials
-    Auth->>Database: Query user by username
-    Database-->>Auth: Return user data
-    Auth->>Auth: Verify password
-    Auth->>Auth: Generate JWT token
-    Auth-->>FastAPI: Return token
-    FastAPI-->>Client: Access token + token type
-    
-    Client->>FastAPI: API Request with Bearer token
-    FastAPI->>Auth: Validate token
-    Auth->>Auth: Decode JWT
-    Auth->>Database: Get user by ID
-    Database-->>Auth: User data
-    Auth-->>FastAPI: Current user
-    FastAPI-->>Client: API Response
+This diagram illustrates how data flows through the system:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                             Data Flow                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────┐              ┌─────────┐              ┌─────────┐
+  │         │    Upload    │         │    Process   │         │
+  │  Input  │ ───────────► │  S3     │ ───────────► │ Pipeline│
+  │  Data   │              │ Storage │              │ (AWS)   │
+  │         │              │         │              │         │
+  └─────────┘              └─────────┘              └─────────┘
+                                                        │
+                                                        │ Generate
+                                                        ▼
+  ┌─────────┐              ┌─────────┐              ┌─────────┐
+  │         │   Download   │         │    Store     │         │
+  │  User   │ ◄─────────── │  Web    │ ◄─────────── │ Results │
+  │         │              │ Interface│              │         │
+  │         │              │         │              │         │
+  └─────────┘              └─────────┘              └─────────┘
 ```
 
-## Pipeline Execution Flow
+## Infrastructure Architecture
 
-```mermaid
-flowchart TD
-    A[User submits job] --> B{Validate Input}
-    B -->|Valid| C[Create job record in DB]
-    B -->|Invalid| D[Return validation error]
-    C --> E[Generate job ID and paths]
-    E --> F[Build Nextflow command]
-    F --> G[Execute Nextflow process]
-    G --> H[Update job status to RUNNING]
-    H --> I[Monitor execution]
-    I --> J{Job completed?}
-    J -->|No| I
-    J -->|Yes| K[Update final status]
-    K --> L[Store results location]
-    
-    M[User requests job status] --> N[Fetch job from DB]
-    N --> O[Check external job status]
-    O --> P[Return current status]
-    
-    Q[User cancels job] --> R[Validate job ownership]
-    R --> S[Send cancel signal to Nextflow]
-    S --> T[Update job status to CANCELLED]
+The platform is deployed across multiple AWS services:
+
 ```
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                               AWS Cloud                                        │
+│                                                                               │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐       │
+│  │             │   │             │   │             │   │             │       │
+│  │ EC2/ECS     │   │ RDS         │   │ S3          │   │ Batch       │       │
+│  │ (App Servers)│   │ (Database)  │   │ (Storage)   │   │ (Compute)   │       │
+│  │             │   │             │   │             │   │             │       │
+│  └─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘       │
+│         │                 │                 │                 │               │
+│         └─────────────────┴─────────────────┴─────────────────┘               │
+│                                    │                                          │
+│  ┌─────────────┐   ┌─────────────┐ │ ┌─────────────┐   ┌─────────────┐       │
+│  │             │   │             │ │ │             │   │             │       │
+│  │ CloudWatch  │   │ IAM         │ │ │ Route53     │   │ CloudFront  │       │
+│  │ (Monitoring)│   │ (Security)  │ │ │ (DNS)       │   │ (CDN)       │       │
+│  │             │   │             │ │ │             │   │             │       │
+│  └─────────────┘   └─────────────┘ │ └─────────────┘   └─────────────┘       │
+│                                    │                                          │
+└────────────────────────────────────┼───────────────────────────────────────────┘
+                                     │
+                                     ▼
+                              ┌─────────────┐
+                              │             │
+                              │ Users       │
+                              │             │
+                              └─────────────┘
+```
+
+## Security Architecture
+
+Security is implemented at multiple levels:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         Security Architecture                            │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+  │                 │   │                 │   │                 │
+  │  Application    │   │  API            │   │  Infrastructure │
+  │  Security       │   │  Security       │   │  Security       │
+  │                 │   │                 │   │                 │
+  └─────────────────┘   └─────────────────┘   └─────────────────┘
+         │                     │                     │
+         ▼                     ▼                     ▼
+  ┌─────────────┐       ┌─────────────┐       ┌─────────────┐
+  │ • Input     │       │ • JWT Auth  │       │ • VPC       │
+  │   Validation│       │ • HTTPS     │       │ • Security  │
+  │ • CSRF      │       │ • Rate      │       │   Groups    │
+  │   Protection│       │   Limiting  │       │ • IAM Roles │
+  │ • XSS       │       │ • CORS      │       │ • Encryption│
+  │   Prevention│       │ • API Keys  │       │ • Firewall  │
+  └─────────────┘       └─────────────┘       └─────────────┘
+```
+
+This architectural documentation provides a clear overview of the Nextflow Pipeline Platform's structure, components, and workflows. For more detailed information on specific components, please refer to the related documentation files.
+
+**Related Documentation**:
+- [Developer Guide](developer_guide.md)
+- [Deployment Guide](deployment.md)
+- [API Documentation](api.md)
