@@ -7,7 +7,7 @@
 A scalable platform for executing Nextflow pipelines on AWS with a FastAPI backend and React frontend.
 
 <div align="center">
-  [System Architecture](docs/assets/architecture_simple.md)
+  [System Architecture](./docs/assets/architecture_simple.md)
 </div>
 
 ## 1. Overview
