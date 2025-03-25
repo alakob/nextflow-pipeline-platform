@@ -17,3 +17,7 @@ venv
 node_modules
 
 action_plan_docs/
+
+# Nextflow
+
+pipeline/.nextflow.log*
