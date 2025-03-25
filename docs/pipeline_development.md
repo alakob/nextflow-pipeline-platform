@@ -279,6 +279,6 @@ process MEMORY_INTENSIVE {
 ## Resources
 
 - [Nextflow Documentation](https://www.nextflow.io/docs/latest/index.html)
-- [nf-core Guidelines](https://nf-co.re/guidelines)
+- [nf-core Guidelines](https://nf-co.re/docs/guidelines/pipelines/overview)
 - [AWS Batch Documentation](https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html)
 - [Biocontainers Registry](https://biocontainers.pro/)
